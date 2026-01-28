@@ -31,7 +31,8 @@ async def graceful_shutdown(manager, timeout_seconds: int, background_tasks: lis
             logger.info(f'Active connections: {manager.active_connections}')
             for ws_id in manager.active_connections.copy():
                 await manager.disconnect(ws_id)
-            await redis_client.flushdb()
+            await redis_client.delete("active_connections_global")
+            await redis_client.delete("global_shutdown")
             break
 
         if not active_clients:
